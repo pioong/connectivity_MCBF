@@ -11,7 +11,6 @@ def main():
     FLIGHT_HEIGHT = 0.5
     SCALE_FACTOR = 1/1.3
     save_sim_animation = False
-    save_eig_animation = False
     avoid_collision = True
     kp = 2
 
@@ -45,17 +44,19 @@ def main():
             vel_data[i][t, :2] = u[i,:]
             pos_data[i][t, :2] = pos_data[i][t - 1, :2] + dt * u[i,:]
 
+    animate(time_data, pos_data, COMM_RANGE, DRONE_COUNT, save_sim_animation)
+
     plot_position(time_data, pos_data)
     plot_input(time_data,vel_data)
-    plt.show()
-
+    
     eig_data = []
     for t in range(len(pos_data[0])):
         L = create_Laplacian_matrix(np.array([pos[t] for pos in pos_data]),COMM_RANGE)
         eigenvalues, _ = np.linalg.eigh(L)
         eig_data.append(eigenvalues)
-    plot_eigenvalues(time_data, eig_data, DRONE_COUNT,dt,save_eig_animation)
-    animate(time_data, pos_data, COMM_RANGE, DRONE_COUNT, save_sim_animation)
+    plot_eigenvalues(time_data, eig_data, DRONE_COUNT)
+    plt.show()
+    
 
 def animate(time_data, pos_data, comm_range, num_drone, save_animation = True):
     # Create figure for animation
@@ -169,33 +170,18 @@ def create_Laplacian_matrix(positions,comm_range):
     D = np.diag(np.sum(A, axis=1))
     return D - A
 
-def plot_eigenvalues(time_data,eig_data,num_drone,dt,save_animation=False):
+def plot_eigenvalues(time_data,eig_data,num_drone):
     fig, ax = plt.subplots(1, 1, figsize=(11.5, 2.5))
     eig_data = np.array(eig_data)
-    lines = [ax.plot([], [], label=rf'$\phi_{i+1}$')[0] for i in range(num_drone)]
-    # for i in range(num_drone):
-    #     plt.plot(time_data, eig_data[:, i], label=rf'$\phi_{i+1}$')
+    for i in range(num_drone):
+        plt.plot(time_data, eig_data[:, i], label=rf'$\phi_{i+1}$')
     
     ax.set_xlim(0,10)
-    ax.set_ylim(-0.5, 1.2)
+    ax.set_ylim(-0.5, 3.0)
     plt.xlabel(r"Time [ticks]")
     plt.ylabel(r"$\phi_i(L(x))$")
     plt.title(r"Eigenvalues over time")
     plt.grid(True)
     plt.legend()  
-
-    def update(frame):
-        for i in range(num_drone):
-            lines[i].set_data(time_data[:frame+1, 0], eig_data[:frame+1, i])
-        return lines
-
-    ani = animation.FuncAnimation(fig, update, frames=len(time_data),
-                                  interval=dt*1000, blit=False)
     plt.tight_layout()
-    plt.show()
-    if save_animation:
-        print('Saving animation as video. Please wait.')
-        writer = animation.FFMpegWriter(fps=int(1/dt), bitrate=1800)
-        ani.save("sim_data/eig_simulation.mp4", writer=writer)
-        print('Done.')
 main()
