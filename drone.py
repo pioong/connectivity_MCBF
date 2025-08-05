@@ -20,8 +20,9 @@ class Drone:
 
     def update_position(self, ux, uy):
         """Update drone position based on control inputs ux and uy."""
-        self.x += 0.5*ux
-        self.y += 0.5*uy
+        dt = 0.5
+        self.x += dt*ux
+        self.y += dt*uy
 
     def move_towards(self, target):
         # Move one step toward the goal to simplify
