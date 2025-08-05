@@ -22,17 +22,22 @@ Install dependencies via:
 ```bash
 pip install -r requirements.txt
 ```
-## Running the Simulation
+## Using the code
 
+To run the game:
+
+```
+python run_game.py
+```
 To run the simulation:
 
 ```
 python simulation.py
 ```
 
-## Simulation Overview
+## Game Overview
 
-The simulation runs a real-time interactive visualization using **pygame**, where:
+The game runs a real-time interactive visualization using **pygame**, where:
 
 - Each agent has a fixed **desired destination**.
 - The **nominal controller** is a **proportional controller** to the agent’s destination.
