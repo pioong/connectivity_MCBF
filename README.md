@@ -52,6 +52,36 @@ The game runs a real-time interactive visualization using **pygame**, where:
 - This agent becomes the **prioritized agent**, marked in **red**.
 - Non-prioritized agents are shown in blue.
 
+### ⚙️ Performance
+
+The speed of the game depends on how fast your computer can solve the underlying optimization problems in real time. If the simulation feels too slow or sluggish, you can adjust the time step `dt` in `drone.py` to reduce the frequency of updates.
+
+> **Note:** Increasing `dt` too much can cause **chattering** in the control inputs — particularly when both **connectivity** and **collision avoidance** constraints are active. This occurs due to **sample-and-hold effects** in the discrete-time controller.
+
+With reasonable values of `dt`, despite possible chattering, the system should still:
+- **Maintain connectivity**
+- **Avoid collisions**
+
+This makes the simulation behaviorally accurate even under less-than-ideal timing conditions.
+
+## 🧪 Simulation Overview
+
+The simulation models **5 drones**:
+
+- **1 center drone** starts at the origin and moves back and forth between the **origin** and the **bottom-right corner**.
+- **4 corner drones** are initialized in each corner and use a **proportional controller** to return to their original positions.
+
+All drones are subject to a **CBF-SDP controller** that:
+- Prevents **collisions**
+- Maintains **connectivity**
+
+As a result, the drones may temporarily move away from their nominal targets to satisfy safety constraints.
+
+After the animation finishes, the simulation generates plots showing:
+- 📍 **Position** of each drone over time
+- 🌀 **Velocity** of each drone
+- 📈 **Eigenvalues** of the graph Laplacian, to illustrate connectivity maintenance
+
 ## Research Context
 
 This code supports our exploration of:
