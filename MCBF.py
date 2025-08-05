@@ -23,9 +23,10 @@ class CBF_SDP():
         self.slack = cp.Variable()
         self.lambdas = cp.Parameter(DRONE_COUNT)
         self.indicator = cp.Parameter((2,2*DRONE_COUNT))
+        self.indicator_times_u_des = cp.Parameter((2,))
         obj = cp.Minimize(cp.sum_squares(self.u-self.u_des)+self.slack**2)
         constraints = []
-        constraints += [self.indicator @ self.u == self.indicator @ self.u_des]
+        constraints += [self.indicator @ self.u == self.indicator_times_u_des]
         if avoid_collision:
             constraints += [self.Lgh2 @ self.u + self.alpha2 * self.h2 >=0]
         
@@ -34,9 +35,10 @@ class CBF_SDP():
         for i in range(2*DRONE_COUNT):
             LguH += self.LgH[:, :, i] * self.u[i]
 
+        # self.LguH = cp.Variable((self.DRONE_COUNT, self.DRONE_COUNT), name="LguH")
         if maintain_connectivity:
-            constraints += [LguH + self.alpha1 * (self.L - self.epsilon * (np.eye(self.DRONE_COUNT))
-                                           + np.ones((self.DRONE_COUNT,self.DRONE_COUNT)) )>> 0 ]
+            constraints += [LguH + self.alpha1 * (self.L - self.epsilon * cp.Constant(np.eye(self.DRONE_COUNT))
+                                           + cp.Constant(np.ones((self.DRONE_COUNT,self.DRONE_COUNT))) )>> 0 ]
         self.prob = cp.Problem(obj,constraints)
 
     def compute_desired_velocities(self, positions, destination_vector, kp=0.01, v_max=0.8):
@@ -75,6 +77,7 @@ class CBF_SDP():
         self.indicator.value = np.zeros((2,2*self.DRONE_COUNT))
         self.indicator.value[0,2*self.priority_index] = 1
         self.indicator.value[1,2*self.priority_index+1] = 1
+        self.indicator_times_u_des.value = self.indicator.value @ self.u_des.value
         return
     
 
@@ -110,8 +113,7 @@ class CBF_SDP():
         self.update_connectivity_CBF(positions)
         self.update_collision_CBF(positions)
 
-        
-        self.prob.solve(solver='CLARABEL',warm_start=False)
+        self.prob.solve(solver='CLARABEL',warm_start=True, canon_backend=cp.SCIPY_CANON_BACKEND)
 
         if self.u.value is None or self.prob.status == 'infeasible':
             print('Error solving SDP. Returning u_des instead.')
