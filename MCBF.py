@@ -35,7 +35,6 @@ class CBF_SDP():
         for i in range(2*DRONE_COUNT):
             LguH += self.LgH[:, :, i] * self.u[i]
 
-        # self.LguH = cp.Variable((self.DRONE_COUNT, self.DRONE_COUNT), name="LguH")
         if maintain_connectivity:
             constraints += [LguH + self.alpha1 * (self.L - self.epsilon * cp.Constant(np.eye(self.DRONE_COUNT))
                                            + cp.Constant(np.ones((self.DRONE_COUNT,self.DRONE_COUNT))) )>> 0 ]
@@ -113,7 +112,17 @@ class CBF_SDP():
         self.update_connectivity_CBF(positions)
         self.update_collision_CBF(positions)
 
-        self.prob.solve(solver='CLARABEL',warm_start=True, canon_backend=cp.SCIPY_CANON_BACKEND)
+        try:
+            self.prob.solve(solver='CLARABEL',warm_start=True,canon_backend=cp.SCIPY_CANON_BACKEND)
+        except:
+            print("Warning: Insufficient Solver Progress. Reducing Tolerances...")
+            try:
+                self.prob.solve(solver='CLARABEL',warm_start=False,canon_backend=cp.SCIPY_CANON_BACKEND,
+                            equilibrate_enable=True,static_regularization_enable=True,
+                            tol_gap_abs = 1e-5, tol_gap_rel = 1e-5, tol_feas = 1e-5)
+                print("Solved. Returning to Default Tolerances...")
+            except:
+                print("Warning: Still Insufficient Solver Progress. Using Last Solution...")
 
         if self.u.value is None or self.prob.status == 'infeasible':
             print('Error solving SDP. Returning u_des instead.')
