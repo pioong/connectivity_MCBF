@@ -7,7 +7,7 @@ from MCBF import CBF_SDP
 def main():
     DRONE_COUNT = 5
     COMM_RANGE = 1.3
-    DRONE_SIZE = 0.2
+    DRONE_SIZE = 0.25
     FLIGHT_HEIGHT = 0.5
     SCALE_FACTOR = 1/1.3
     save_sim_animation = False
