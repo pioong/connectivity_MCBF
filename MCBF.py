@@ -100,7 +100,7 @@ class CBF_SDP():
                 self.Lgh2.value[pair,2*j] = x_diff[j,i,0]
                 self.Lgh2.value[pair,2*j+1] = x_diff[j,i,1]
                 dist = np.linalg.norm(x_diff[i,j,:])
-                self.h2.value[pair] = dist**2-(2.5*self.DRONE_SIZE)**2
+                self.h2.value[pair] = dist**2-(2*self.DRONE_SIZE)**2
                 pair = pair + 1
         return
 
