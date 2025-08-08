@@ -88,19 +88,17 @@ This code supports our exploration of:
 - Enforcing matrix inequality constraints via MCBFs.
 - Integrating CBF-SDP with semidefinite constraints.
 
----
 
 ## 📄 Related Paper
 
 This repository complements the following paper:
 
 **Matrix Control Barrier Functions**  
-Pio Ong, Yicheng Xu, Ryan M. Bena, Faryar Jabbari, Aaron D. Ames
+Pio Ong, Yicheng Xu, Ryan M. Bena, Faryar Jabbari, Aaron D. Ames.  
 Submitted to **IEEE Transactions on Automatic Control (TAC)**, 2025.
 
 > If you use this code or build on it, please consider citing the paper.
 
----
 
 ## 🙏 Acknowledgments
 
