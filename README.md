@@ -87,3 +87,20 @@ After the animation finishes, the simulation generates plots showing:
 This code supports our exploration of:
 - Enforcing matrix inequality constraints via MCBFs.
 - Integrating CBF-SDP with semidefinite constraints.
+
+
+## 📄 Related Paper
+
+This repository complements the following paper:
+
+**Matrix Control Barrier Functions**  
+Pio Ong, Yicheng Xu, Ryan M. Bena, Faryar Jabbari, Aaron D. Ames.  
+Submitted to **IEEE Transactions on Automatic Control (TAC)**, 2025.
+
+> If you use this code or build on it, please consider citing the paper.
+
+
+## 🙏 Acknowledgments
+
+This work was supported in part by the Technology Innovation Institute (TII).  
+We would like to thank Carlos Llamas of the Technology Innovation Institute (TII) for his contributions to the development of the Pygame environment.
