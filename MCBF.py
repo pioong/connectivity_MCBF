@@ -20,11 +20,10 @@ class CBF_SDP():
         self.L.value = np.zeros((DRONE_COUNT,DRONE_COUNT))
         self.LgH = cp.Parameter((DRONE_COUNT,DRONE_COUNT,2*DRONE_COUNT))
         self.LgH.value = np.zeros((DRONE_COUNT,DRONE_COUNT,2*DRONE_COUNT))
-        self.slack = cp.Variable()
         self.lambdas = cp.Parameter(DRONE_COUNT)
         self.indicator = cp.Parameter((2,2*DRONE_COUNT))
         self.indicator_times_u_des = cp.Parameter((2,))
-        obj = cp.Minimize(cp.sum_squares(self.u-self.u_des)+self.slack**2)
+        obj = cp.Minimize(cp.sum_squares(self.u-self.u_des))
         constraints = []
         constraints += [self.indicator @ self.u == self.indicator_times_u_des]
         if avoid_collision:
